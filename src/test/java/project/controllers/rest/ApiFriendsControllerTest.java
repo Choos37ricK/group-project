@@ -25,7 +25,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-@TestPropertySource("/application_test.properties")
+@TestPropertySource("/application-test.properties")
 class ApiFriendsControllerTest {
 
     @Autowired
@@ -54,7 +54,7 @@ class ApiFriendsControllerTest {
 
     @Test
     void sendFriendRequest() throws Exception {
-        mvc.perform(post("/api/v1/friends/3")
+        mvc.perform(post("/api/v1/friends/4")
                 //.contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", token2))
                 .andDo(print())

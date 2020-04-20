@@ -20,6 +20,14 @@ INSERT INTO `dialog_user` VALUES('6', '2');
 
 INSERT INTO `message`(`id`, `author_id`, `message_text`, `read_status`, `recipient_id`, `time`, `dialog_id`) VALUES ('9', '10', 'hello world', 'SENT', '2', '2020-04-06 06:07:11', '6');
 
+INSERT INTO `friendship_status` (`id`, `code`, `name`, `time`) VALUES ('30', 'FRIEND', 'Друзья', '2020-04-19 17:02:14');
+INSERT INTO `friendship_status` (`id`, `code`, `name`, `time`) VALUES ('31', 'REQUEST', 'Запрос на добавление в друзья', '2020-04-19 18:31:35');
+
+INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('32', '10', '2', '30');
+INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('33', '10', '3', '30');
+INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('34', '2', '3', '31');
+
+
 
 
 

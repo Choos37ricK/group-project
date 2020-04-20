@@ -3,7 +3,6 @@ package project.controllers.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,7 +21,7 @@ import project.services.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -43,10 +42,12 @@ class ApiUsersControllerTest {
 
     private static final ObjectMapper om = new ObjectMapper();
     private final String token2;
+    private final String token;
 
     @Autowired
     public ApiUsersControllerTest(TokenProvider tokenProvider, PersonService personService) {
         token2 = tokenProvider.createToken("test2@mail.ru");
+        token = tokenProvider.createToken("test1@mail.ru");
     }
 
     @Test
@@ -118,10 +119,10 @@ class ApiUsersControllerTest {
         String json = om.writeValueAsString(dto);
         System.out.println(json);
 
-        mockMvc.perform(post("/api/v1/users/2/wall")
+        mockMvc.perform(post("/api/v1/users/10/wall")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json)
-                .header("Authorization", token2)
+                .header("Authorization", token)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
