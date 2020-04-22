@@ -5,11 +5,8 @@ import lombok.SneakyThrows;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.ArgumentMatchers;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -17,12 +14,7 @@ import project.dto.requestDto.LoginRequestDto;
 import project.dto.responseDto.PersonDtoWithToken;
 import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
-import project.models.Person;
 import project.repositories.PersonRepository;
-import project.security.TokenProvider;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest

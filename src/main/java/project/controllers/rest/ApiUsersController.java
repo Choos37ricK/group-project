@@ -25,7 +25,6 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
