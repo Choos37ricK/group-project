@@ -2,7 +2,9 @@ package project.controllers.rest;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.dto.requestDto.PostRequestBodyTagsDto;
 import project.dto.requestDto.UpdatePersonDto;
@@ -23,12 +25,12 @@ import javax.validation.constraints.Positive;
 import javax.validation.constraints.PositiveOrZero;
 import javax.validation.constraints.Size;
 import java.util.Date;
-import java.util.List;
 
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/users/")
 @AllArgsConstructor
+@Validated
 public class ApiUsersController {
 
     private PersonService personService;
@@ -109,8 +111,7 @@ public class ApiUsersController {
                              @RequestParam(required = false, defaultValue = "20") @Positive @Max(20) Integer itemPerPage,
                              HttpServletRequest request) {
         Person person = tokenProvider.getPersonByRequest(request);
-        long personCount = personService.searchCount(person, firstName, lastName, ageFrom, ageTo, country, city);
-        List<Person> persons = personService.search(person, firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage);
-        return ResponseEntity.ok(new ListResponseDto<>(personCount, offset, itemPerPage, persons));
+        Page<Person> persons = personService.search(person, firstName, lastName, ageFrom, ageTo, country, city, offset, itemPerPage);
+        return ResponseEntity.ok(new ListResponseDto<>(persons.getTotalElements(), offset, itemPerPage, persons.getContent()));
     }
 }

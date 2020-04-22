@@ -8,7 +8,9 @@ import lombok.ToString;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.*;
-import java.util.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Data
 @EqualsAndHashCode(exclude = "tagList", callSuper = false)
@@ -33,11 +35,12 @@ public class Post extends MainEntity {
     @Column(name = "post_text")
     private String postText;
 
-    @Column(name = "id_blocked")
+    @Column(name = "is_blocked")
     @Type(type = "yes_no")
     private Boolean isBlocked;
 
     @JsonProperty("my_like")
+    @Type(type = "yes_no")
     private Boolean myLike;
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)

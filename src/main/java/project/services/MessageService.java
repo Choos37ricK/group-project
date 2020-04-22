@@ -2,8 +2,6 @@ package project.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import project.dto.dialog.request.CreateDialogDto;
 import project.dto.dialog.request.MessageRequestDto;
@@ -19,7 +17,10 @@ import project.repositories.*;
 import project.security.TokenProvider;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Collectors;
 
@@ -77,7 +78,7 @@ public class MessageService {
                 message = sentMessage(
                         dialog.getId(),
                         new MessageRequestDto("Привет! Я " + person.getFirstName() + " " + person.getLastName()),
-                        request);
+                        person);
             } else {
                 message = messageList.get(0);//
             }
@@ -161,8 +162,7 @@ public class MessageService {
         return new ListResponseDto<>((long) messageDtoList.size(), offset, itemPerPage, messageDtoList);
     }
 
-    public Message sentMessage(Integer id, MessageRequestDto dto, HttpServletRequest request) throws BadRequestException400 {
-        Person author = tokenProvider.getPersonByRequest(request);
+    public Message sentMessage(Integer id, MessageRequestDto dto, Person author) throws BadRequestException400 {
         Dialog dialog = dialogRepository.findById(id).orElseThrow(BadRequestException400::new);
         List<Person> personList = new ArrayList<>(dialog.getPersons());
         personList.remove(author);

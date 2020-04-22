@@ -1,6 +1,7 @@
 package project.controllers.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +18,11 @@ import project.dto.requestDto.LoginRequestDto;
 import project.security.TokenProvider;
 import project.services.PersonService;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
@@ -28,7 +30,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-@TestPropertySource("/application-test.properties")
+@TestPropertySource("/test.properties")
 class ApiAuthControllerTest {
 
     @Autowired
@@ -43,7 +45,8 @@ class ApiAuthControllerTest {
     }
 
     @Test
-    void login() throws Exception {
+    @SneakyThrows
+    void login() {
         LoginRequestDto dto = new LoginRequestDto("test2@mail.ru", "123123123");
         String json = om.writeValueAsString(dto);
         System.out.println(json);
@@ -58,8 +61,9 @@ class ApiAuthControllerTest {
     }
 
     @Test
+    @SneakyThrows
     @WithMockUser("ROLE_USER")
-    void logout() throws Exception {
+    void logout() {
         mockMvc.perform(post("/api/v1/auth/logout")
                 .accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", token2))

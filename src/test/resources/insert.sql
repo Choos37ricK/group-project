@@ -1,7 +1,7 @@
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('10', 'test1@mail.ru', 'first1', 'N', 'last1', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('2', 'test2@mail.ru', 'first2', 'N', 'last2', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('3', 'test3@mail.ru', 'first3', 'N', 'last3', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
-INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('4', 'test3@mail.ru', 'first4', 'N', 'last4', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
+INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('4', 'test4@mail.ru', 'first4', 'N', 'last4', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
 
 INSERT INTO `roles` (`id`, `name`) VALUES ('5', 'ROLE_USER');
 
@@ -27,8 +27,18 @@ INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) V
 INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('33', '10', '3', '30');
 INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('34', '2', '3', '31');
 
+INSERT INTO `notification_type` VALUES ('1','POST','Новый пост');
+INSERT INTO `notification_type` VALUES ('2','POST_COMMENT','Комментарий к посту');
+INSERT INTO `notification_type` VALUES ('3','COMMENT_COMMENT','Ответ на комментарий');
+INSERT INTO `notification_type` VALUES ('4','FRIEND_REQUEST','Запрос дружбы');
+INSERT INTO `notification_type` VALUES ('5','MESSAGE','Личное сообщение');
+INSERT INTO `notification_type` VALUES ('6','FRIEND_BIRTHDAY ','День рождения друга');
 
+INSERT INTO `post` VALUES ('100', 'N', 'N', 'post text', '2020-04-19 17:02:14', 'Title1', '2');
+INSERT INTO `post` VALUES ('101', 'N', 'N', 'post text', '2020-04-19 17:02:14', 'Title2', '2');
 
+INSERT INTO `tag` VALUES ('1', 'tag1');
 
+INSERT INTO `post2tag` VALUES ('100', '1');
 
 

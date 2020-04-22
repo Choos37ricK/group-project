@@ -1,6 +1,7 @@
 package project.controllers.rest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,10 +23,10 @@ import project.services.PersonService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.*;
+import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -34,7 +35,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @ActiveProfiles("dev")
-@TestPropertySource("/application_test.properties")
+@TestPropertySource("/test.properties")
 class ApiDialogsControllerTest {
 
     @Autowired
@@ -52,8 +53,9 @@ class ApiDialogsControllerTest {
     }
 
     @Test
+    @SneakyThrows
     @WithMockUser("ROLE_USER")
-    void getAllDialogs() throws Exception {
+    void getAllDialogs() {
         System.out.println(token);
 
         mvc.perform(get("/api/v1/dialogs/")
@@ -72,7 +74,8 @@ class ApiDialogsControllerTest {
     }
 
     @Test
-    void createDialog()  throws Exception{
+    @SneakyThrows
+    void createDialog() {
 
         List<Integer> list = new ArrayList<>(1);
         list.add(4);
@@ -92,8 +95,9 @@ class ApiDialogsControllerTest {
 
 
     @Test
+    @SneakyThrows
     @WithMockUser("ROLE_USER")
-    void countSentMessage() throws Exception {
+    void countSentMessage() {
 
         mvc.perform(get("/api/v1/dialogs/unreaded") .accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", token))
@@ -103,7 +107,8 @@ class ApiDialogsControllerTest {
     }
 
     @Test
-    void getDialogMessages() throws Exception {
+    @SneakyThrows
+    void getDialogMessages() {
         mvc.perform(get("/api/v1/dialogs/6/messages").accept(MediaType.APPLICATION_JSON)
                 .header("Authorization", token))
                 .andDo(print())
@@ -121,26 +126,28 @@ class ApiDialogsControllerTest {
     }
 
     @Test
-    void sentMessage() throws Exception {
+    @SneakyThrows
+    void sentMessage() {
 
         MessageRequestDto dto = new MessageRequestDto("Haba haba");
 
         mvc.perform(post("/api/v1/dialogs/6/messages")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(om.writeValueAsString(dto))
-                .header("Authorization",token2)
+                .header("Authorization", token2)
                 .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data.recipientId", is(2)))
-                .andExpect(jsonPath("$.data.authorId", is(10)))
+                .andExpect(jsonPath("$.data.recipientId", is(10)))
+                .andExpect(jsonPath("$.data.authorId", is(2)))
                 .andExpect(jsonPath("$.data.messageText", is("Haba haba")))
                 .andExpect(jsonPath("$.data.readStatus", is("SENT")));
 
     }
 
     @Test
-    void readMessage() throws Exception {
+    @SneakyThrows
+    void readMessage() {
         mvc.perform(put("/api/v1/dialogs/6/messages/9/read")
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization",token2))

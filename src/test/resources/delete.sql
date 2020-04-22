@@ -22,5 +22,8 @@ DELETE FROM Post;
 
 DELETE FROM Person_Notification_Settings;
 
+DELETE FROM Notification_Type;
+
 DELETE FROM Person;
 
+DELETE FROM Tag;
