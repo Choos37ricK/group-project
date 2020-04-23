@@ -16,11 +16,13 @@ import project.dto.responseDto.ResponseDto;
 import project.models.Post;
 import project.models.Tag;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+@Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.AFTER_TEST_METHOD)
 @RunWith(SpringRunner.class)
@@ -65,37 +67,38 @@ public class PostServiceTest {
 
     @Test
     @SneakyThrows
-    public void getPostDtoById(){
-        // можно не тестить, используется в findAllPostsTest
-    }
-
-    @Test
-    @SneakyThrows
     public void addNewWallPostByAuthorId(){
-
-    }
-
-    @Test
-    @SneakyThrows
-    public void saveTags(){
-
+        List<String> tagList = new ArrayList<>();
+        PostRequestBodyTagsDto dto = new PostRequestBodyTagsDto("testiruem", "post text", tagList);
+        ResponseDto<PostDto> postDto = postService.addNewWallPostByAuthorId(13, null, dto);
+        assertEquals(postDto.getData().getPostText(), "post text");
+        //попробовать мокнуть репозиторий
     }
 
     @Test
     @SneakyThrows
     public void findAllByAuthorId(){
-
+        ListResponseDto dto = postService.findAllByAuthorId(12, 0, 20, 13);
+        assertEquals(dto.getData().size(), 1);
     }
 
     @Test
     @SneakyThrows
     public void getPostsByTitleAndDate(){
-
+        List<Post> posts = postService
+                .getPostsByTitleAndDate("Title1", "", "", 0, 20);
+        Post post = posts.get(0);
+        assertEquals(post.getPostText(), "post text");
+        // без дат работает
+        // с датой от какого-то дня работает (1586962531)
+        // c датой до какого-то дня не работает (1587635731)
     }
 
     @Test
     @SneakyThrows
     public void deleteAllPostsByAuthorId(){
-
+        postService.deleteAllPostsByAuthorId(12);
+        ListResponseDto dto = postService.findAllByAuthorId(12, 0, 20, 12);
+        assertEquals(dto.getData().size(), 0);
     }
 }

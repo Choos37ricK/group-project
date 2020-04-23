@@ -27,6 +27,7 @@ INSERT INTO `friendship_status` (`id`, `code`, `name`, `time`) VALUES ('31', 'RE
 
 INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('32', '10', '12', '30');
 INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('33', '10', '13', '30');
+INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('35', '12', '10', '30');
 INSERT INTO `friendship` (`id`, `dst_person_id`, `src_person_id`, `status_id`) VALUES ('34', '12', '13', '31');
 
 
