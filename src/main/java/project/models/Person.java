@@ -3,7 +3,6 @@ package project.models;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -108,7 +107,7 @@ public class Person extends MainEntity {
     private List<PostComment> commentList = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "srcPerson", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "srcPerson", cascade = CascadeType.ALL)
     private List<Friendship> sentFriendshipRequests = new ArrayList<>();
 
     @JsonIgnore

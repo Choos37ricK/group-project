@@ -7,7 +7,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
-import project.dto.CommentDto;
 import project.dto.PostDto;
 import project.dto.requestDto.PostRequestBodyTagsDto;
 import project.dto.responseDto.ListResponseDto;
@@ -20,7 +19,10 @@ import project.repositories.NotificationRepository;
 import project.repositories.NotificationTypeRepository;
 import project.repositories.PostRepository;
 
-import java.util.*;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toList;
@@ -112,7 +114,7 @@ public class PostService {
         Post finalPost = postRepository.save(post);
 
         if (publishTime.before(new Date())) {
-            List<Person> friendList = friendshipService.getFriendsList(author);
+           List<Person> friendList = friendshipService.getFriendsList(author);
             friendList.forEach(friend -> {
 
                 Notification notification = new Notification();
