@@ -85,12 +85,13 @@ public class PostServiceTest {
     @SneakyThrows
     public void getPostsByTitleAndDate(){
         List<Post> posts = postService
-                .getPostsByTitleAndDate("Title1", "", "", 0, 20);
+                .getPostsByTitleAndDate("Title1", "1587036556085", "1587641334016", 0, 20);
         Post post = posts.get(0);
         assertEquals(post.getPostText(), "post text");
         // без дат работает
-        // с датой от какого-то дня работает (1586962531)
-        // c датой до какого-то дня не работает (1587635731)
+        // с датой от какого-то дня работает (1587036556085)
+        // c датой до какого-то дня работает (1587641334016)
+        // с двумя датами проходит
     }
 
     @Test
