@@ -10,6 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -20,6 +21,8 @@ import project.handlerExceptions.BadRequestException400;
 import project.models.Person;
 import project.repositories.PersonRepository;
 import project.security.TokenProvider;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -34,6 +37,9 @@ public class PersonServiceTest {
     private PersonService personService;
 
     @Autowired
+    private PasswordEncoder encoder;
+
+    @MockBean
     private PersonRepository personRepository;
 
     private static final ObjectMapper om = new ObjectMapper();
@@ -43,19 +49,22 @@ public class PersonServiceTest {
     public void login() {
         LoginRequestDto loginRequestDto = new LoginRequestDto("ilyxa043@gmail.com", "qweasdzxc");
 
-//        Person person = new Person();
-//        person.setEmail("ilyxa043@gmail.com");
+        Person person = new Person();
+        person.setEmail("ilyxa043@gmail.com");
+        person.setPassword(encoder.encode(loginRequestDto.getPassword()));
 //        personRepository.save(person);
+
+        Mockito.doReturn(Optional.of(person)).when(personRepository).findPersonByEmail(person.getEmail());
 
         ResponseDto responseDto = personService.login(loginRequestDto);
 
-        PersonDtoWithToken person = (PersonDtoWithToken) responseDto.getData();
+        PersonDtoWithToken personDto = (PersonDtoWithToken) responseDto.getData();
         //ResponseDto<PersonDtoWithToken> person = new ResponseDto<>();
 
 //        Mockito.verify(personRepository, Mockito.times(1))
 //                .findPersonByEmail(loginRequestDto.getEmail());
 
-        Assert.assertEquals(loginRequestDto.getEmail(), person.getEmail());
+        Assert.assertEquals(loginRequestDto.getEmail(), personDto.getEmail());
     }
 
     @Test(expected = BadRequestException400.class)
