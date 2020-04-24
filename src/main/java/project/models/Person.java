@@ -6,6 +6,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 import org.hibernate.annotations.Type;
 import project.models.enums.MessagesPermission;
 
@@ -111,7 +113,8 @@ public class Person extends MainEntity {
     private List<Friendship> sentFriendshipRequests = new ArrayList<>();
 
     @JsonIgnore
-    @OneToMany(mappedBy = "dstPerson", cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "dstPerson", cascade = CascadeType.ALL)
+    @Fetch(value = FetchMode.SUBSELECT)
     private List<Friendship> receivedFriendshipRequests = new ArrayList<>();
 
     @JsonIgnore

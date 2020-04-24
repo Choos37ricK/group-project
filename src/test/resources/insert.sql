@@ -1,3 +1,11 @@
+insert into notification_type (code, name) values ("POST", "Новый пост");
+insert into notification_type (code, name) values ("POST_COMMENT", "Комментарий к посту");
+insert into notification_type (code, name) values ("COMMENT_COMMENT", "Ответ на комментарий");
+insert into notification_type (code, name) values ("FRIEND_REQUEST", "Запрос дружбы");
+insert into notification_type (code, name) values ("MESSAGE", "Личное сообщение");
+insert into notification_type (code, name) values ("FRIEND_BIRTHDAY", "День рождения друга");
+
+
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('10', 'test1@mail.ru', 'first1', 'N', 'last1', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('12', 'test2@mail.ru', 'first2', 'N', 'last2', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
 INSERT INTO `person`(`id`, `e_mail`, `first_name`, `is_blocked`, `last_name`, `password`, `reg_date`) VALUES ('13', 'test3@mail.ru', 'first3', 'N', 'last3', '$2a$10$EqHML.VBGRVxqylVOwETdO3.ueCbsCKF.UPO3AN16l1Fn2pYENPjW', '2020-04-06 06:10:51');
