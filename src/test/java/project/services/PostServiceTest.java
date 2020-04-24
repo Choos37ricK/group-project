@@ -71,7 +71,6 @@ public class PostServiceTest {
         PostRequestBodyTagsDto dto = new PostRequestBodyTagsDto("testiruem", "post text", tagList);
         ResponseDto<PostDto> postDto = postService.addNewWallPostByAuthorId(13, null, dto);
         assertEquals(postDto.getData().getPostText(), "post text");
-        //попробовать мокнуть репозиторий
     }
 
     @Test
