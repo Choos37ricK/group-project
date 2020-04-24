@@ -2,6 +2,7 @@ package project.models;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.annotations.Proxy;
 
 import javax.persistence.*;
 
