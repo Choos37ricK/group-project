@@ -26,18 +26,16 @@ import java.util.Map;
 @RestController
 @RequestMapping(value = "/api/v1/account/")
 public class ApiAccountController {
+
     private PersonService personService;
-    private TokenProvider tokenProvider;
     private PersonNotificationSettingsService personNotificationSettingsService;
     private NotificationTypeService notificationTypeService;
 
     @Autowired
     public ApiAccountController(PersonService personService,
-                                TokenProvider tokenProvider,
                                 PersonNotificationSettingsService personNotificationSettingsService,
                                 NotificationTypeService notificationTypeService) {
         this.personService = personService;
-        this.tokenProvider = tokenProvider;
         this.personNotificationSettingsService = personNotificationSettingsService;
         this.notificationTypeService = notificationTypeService;
     }
