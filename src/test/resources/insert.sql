@@ -41,6 +41,7 @@ INSERT INTO `post_like` (`id`, `person_id`, `post_id`, `time`) VALUES ('70', '2'
 INSERT INTO `post_like` (`id`, `person_id`, `post_id`, `time`) VALUES ('71', '3', '100', '2020-04-06 06:07:11');
 
 INSERT INTO `tag` VALUES ('1', 'tag1');
+INSERT INTO `tag` VALUES ('2', 'gat2');
 
 INSERT INTO `post2tag` VALUES ('100', '1');
 
