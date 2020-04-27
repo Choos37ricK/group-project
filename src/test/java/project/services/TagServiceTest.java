@@ -1,5 +1,6 @@
 package project.services;
 
+import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,11 +11,11 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
 import project.models.Tag;
-import project.repositories.TagRepository;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 @Sql(value = {"/delete.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
 @Sql(value = {"/insert.sql"}, executionPhase = Sql.ExecutionPhase.BEFORE_TEST_METHOD)
@@ -29,32 +30,33 @@ class TagServiceTest {
     @Autowired
     private TagService tagService;
 
-    @Autowired
-    private TagRepository tagRepository;
-
     @Test
-    void getAllTags() {
-        List<Tag> list = tagService.getAllTags("tag",0,10);
-        assertEquals(list.size(), 2);
+    @SneakyThrows
+    public void getAllTagsTest(){
+        List<Tag> tagList = tagService.getAllTags("tag", 0, 20);
+        assertEquals(tagList.size(), 1);
     }
 
     @Test
-    void saveTag() {
-        tagService.saveTag("newTag");
-        Tag tag = tagRepository.findByTag("newTag").orElse(null);
-        assertEquals(tag.getTag(), "newTag");
+    @SneakyThrows
+    public void saveTagTest(){
+        Tag tag = tagService.saveTag("tagForLife");
+        assertEquals(tag.getTag(), "tagForLife");
     }
 
     @Test
-    void findByTagName() {
+    @SneakyThrows
+    public void findByTagNameTest(){
         Tag tag = tagService.findByTagName("tag1");
-        assertEquals(tag.getTag(), "tag1");
+        assertEquals(tag.getId(), 15);
     }
 
     @Test
-    void deleteTag() {
-//        tagService.deleteTag(200);
-//        Tag tag = tagRepository.findById(200).orElse(null);
-//        assertNull(tag);
+    @SneakyThrows
+    public void deleteTagTest(){
+        tagService.deleteTag(20);
+        Tag tag = tagService.findByTagName("gat2");
+        assertNull(tag);
     }
+
 }
