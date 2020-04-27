@@ -69,8 +69,8 @@ public class PostServiceTest {
     public void addNewWallPostByAuthorId(){
         List<String> tagList = new ArrayList<>();
         PostRequestBodyTagsDto dto = new PostRequestBodyTagsDto("testiruem", "post text", tagList);
-        ResponseDto<PostDto> postDto = postService.addNewWallPostByAuthorId(2, null, dto);
-        assertEquals(postDto.getData().getPostText(), "post text");
+        ResponseDto<PostDto> postDto = postService.addNewWallPostByAuthorId(10, null, dto);
+        assertEquals(postDto.getData().getTitle(), "testiruem");
     }
 
     @Test
@@ -98,6 +98,6 @@ public class PostServiceTest {
     public void deleteAllPostsByAuthorId(){
         postService.deleteAllPostsByAuthorId(12);
         ListResponseDto dto = postService.findAllByAuthorId(2, 0, 20, 12);
-        assertEquals(dto.getData().size(), 0);
+        assertEquals(dto.getData().size(), 2);
     }
 }
