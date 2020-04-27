@@ -7,12 +7,10 @@ import project.dto.requestDto.AddLikeDto;
 import project.dto.responseDto.LikeUsersListDto;
 import project.dto.responseDto.ResponseDto;
 import project.models.Person;
-import project.security.TokenProvider;
 import project.services.PersonService;
 import project.services.PostLikeService;
 import project.services.PostService;
 
-import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
