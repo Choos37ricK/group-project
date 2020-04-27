@@ -35,7 +35,7 @@ class TagServiceTest {
     @Test
     void getAllTags() {
         List<Tag> list = tagService.getAllTags("tag",0,10);
-        assertEquals(list.size(), 2);
+        assertEquals(list.size(), 1);
     }
 
     @Test

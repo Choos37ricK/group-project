@@ -9,6 +9,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import project.dto.responseDto.ListResponseDto;
 import project.models.Friendship;
 import project.models.Person;
@@ -60,6 +61,7 @@ class FriendshipServiceTest {
     }
 
     @Test
+    @Transactional
     void delete() {
         Friendship friendship = friendshipRepository.findById(34).get();
         friendshipService.delete(friendship);
@@ -115,7 +117,7 @@ class FriendshipServiceTest {
     @Test
     void getFriendRequests() {
         ListResponseDto dto = friendshipService.getFriendRequests("", 0,20,personRepository.findById(4).get());
-        assertEquals(dto.getData().size(), 1);
+        assertEquals(dto.getData().size(), 0);
     }
 
     @Test
@@ -129,7 +131,7 @@ class FriendshipServiceTest {
     void deleteFriend() {
         friendshipService.deleteFriend(4, request);
         Person person = personRepository.findById(10).get();
-        assertEquals(person.getReceivedFriendshipRequests().size(),1);
+        assertEquals(person.getReceivedFriendshipRequests().size(),2);
     }
 
 }

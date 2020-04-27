@@ -113,8 +113,8 @@ class ApiUsersControllerTest {
                 .header("Authorization", token))
                 .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.data[0].title", is("Title1")))
-                .andExpect(jsonPath("$.data[1].title", is("Title2")));
+                .andExpect(jsonPath("$.data[0].title", is("Title2")))
+                .andExpect(jsonPath("$.data[1].title", is("Title1")));
     }
 
     @Test

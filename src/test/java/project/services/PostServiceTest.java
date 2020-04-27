@@ -77,7 +77,7 @@ public class PostServiceTest {
     @SneakyThrows
     public void findAllByAuthorId(){
         ListResponseDto dto = postService.findAllByAuthorId(12, 0, 20, 13);
-        assertEquals(dto.getData().size(), 1);
+        assertEquals(dto.getData().size(), 0);
     }
 
     @Test

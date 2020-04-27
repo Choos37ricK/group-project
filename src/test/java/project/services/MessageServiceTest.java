@@ -10,6 +10,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.transaction.annotation.Transactional;
 import project.dto.dialog.request.MessageRequestDto;
 import project.dto.dialog.response.DialogDto;
 import project.dto.responseDto.ListResponseDto;
@@ -91,6 +92,7 @@ class MessageServiceTest {
     }
 
     @Test
+    @Transactional
     void getAllDialogs() {
          ListResponseDto<DialogDto> dto = messageService.getAllDialogs("???",0 , 10, request);
          assertEquals(dto.getData().size(), 1);
