@@ -1,12 +1,12 @@
 package project.services;
 
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.dto.requestDto.LoginRequestDto;
@@ -17,12 +17,13 @@ import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.PersonDtoWithToken;
 import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
+import project.handlerExceptions.EntityNotFoundException;
 import project.handlerExceptions.UnauthorizationException401;
 import project.models.Person;
-import project.models.PersonNotificationSetting;
 import project.models.Role;
 import project.models.VerificationToken;
 import project.models.enums.MessagesPermission;
+import project.models.enums.RoleEnum;
 import project.models.util.entity.ImagePath;
 import project.repositories.PersonRepository;
 import project.repositories.RoleRepository;
@@ -53,25 +54,16 @@ public class PersonService {
     private TokenProvider tokenProvider;
 
     @Autowired
-    private AuthenticationManager authenticationManager;
-
-    @Autowired
     VerificationTokenService verificationTokenService;
 
     @Autowired
     EmailService emailService;
 
     @Autowired
-    RoleRepository roleRepository;
+    private RoleRepository roleRepository;
 
     @Autowired
     private ImagePath imagePath;
-
-    @Autowired
-    private PersonNotificationSettingsService notificationSettingsService;
-
-    @Autowired
-    private NotificationTypeService notificationTypeService;
 
     //    @PostConstruct
 //    public void init() {
@@ -86,23 +78,16 @@ public class PersonService {
 //
 //    }
 
+    @SneakyThrows(EntityNotFoundException.class)
+    public Person add(RegistrationRequestDto dto) {
+        if (personRepository.findPersonByEmail(dto.getEmail()).isPresent())
+            throw new BadRequestException400();
 
-    public Boolean registrationPerson(RegistrationRequestDto dto) throws BadRequestException400 {
-        Person exist = personRepository.findPersonByEmail(dto.getEmail()).orElse(null);
-        if (exist != null) throw new BadRequestException400();
+        Role role = roleRepository.findByName(RoleEnum.ROLE_USER).orElseThrow(
+            () -> new EntityNotFoundException("User role not found")
+        );
+
         Person person = new Person();
-        Boolean existsById = roleRepository.existsById(1);
-
-        Role role;
-        if (!existsById) {
-            role = new Role();
-            role.setId(1);
-            role.setName("ROLE_USER");
-        }
-        else {
-            role = roleRepository.findById(1).get();
-        }
-
         person.setEmail(dto.getEmail());
         person.setPassword(encoder.encode(dto.getPasswd1()));
         person.setPhoto(imagePath.getDefaultImagePath());
@@ -110,22 +95,17 @@ public class PersonService {
         person.setLastName(dto.getLastName());
         person.setRegDate(new Date());
         person.setRoles(Collections.singleton(role));
-        personRepository.save(person);
-
-        for (int i = 2; i < 7; i++) {
-            PersonNotificationSetting notificationSetting = new PersonNotificationSetting();
-            notificationSetting.setEnable(false);
-            notificationSetting.setNotificationType(notificationTypeService.findById(i));
-            notificationSetting.setPerson(person);
-            notificationSettingsService.save(notificationSetting);
-        }
-
-        return true;
+        return personRepository.save(person);
     }
 
     public ResponseDto<PersonDtoWithToken> login(LoginRequestDto dto){
         String email = dto.getEmail();
         Person person = personRepository.findPersonByEmail(email).orElseThrow(BadRequestException400::new);
+
+        if (!encoder.matches(dto.getPassword(), person.getPassword())){
+            throw new BadRequestException400();
+        }
+
         person.setLastOnlineTime(new Date());
         saveLastOnlineTime(person);
 
@@ -226,7 +206,7 @@ public class PersonService {
 
     public Person editBody(UpdatePersonDto dto, HttpServletRequest request) throws UnauthorizationException401
     {
-        Person person = tokenProvider.getPersonByRequest(request);
+        Person person = getPersonByToken(request);
         person.setFirstName(dto.getFirstName());
         person.setLastName(dto.getLastName());
         person.setBirthDate(dto.getBirthDate());

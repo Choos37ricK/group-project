@@ -3,7 +3,10 @@ package project.controllers.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import project.dto.requestDto.LoginRequestDto;
 import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.ResponseDto;
@@ -47,7 +50,7 @@ public class ApiAuthController {
     @PostMapping(value = "logout")
     ResponseEntity logout(HttpServletRequest servletRequest) {
         try {
-            Person person = tokenProvider.getPersonByRequest(servletRequest);
+            Person person = personService.getPersonByToken(servletRequest);
             person.setLastOnlineTime(new Date());
             personService.saveLastOnlineTime(person);
         }

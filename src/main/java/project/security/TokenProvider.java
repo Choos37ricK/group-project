@@ -10,15 +10,16 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
-import project.handlerExceptions.UnauthorizationException401;
-import project.models.Person;
 import project.models.Role;
 import project.repositories.PersonRepository;
 
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import java.nio.file.AccessDeniedException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.Date;
+import java.util.List;
 
 /**
  * Данный класс работает с нашим токеном*/
@@ -34,7 +35,6 @@ public class TokenProvider
 
     @Value("${jwt.token.expired}")
     private long validityMillisecond;
-
 
     private UserDetailsService userDetailsService;
 
@@ -87,14 +87,14 @@ public class TokenProvider
     }
 
     /** Получение Person по запросу*/
-    public Person getPersonByRequest(HttpServletRequest request) throws UnauthorizationException401
-    {
-        Optional<Person> person = personRepository.findByEmail(getEmailByRequest(request));
-        if(person.isPresent()){
-            return person.get();
-        }
-        throw new UnauthorizationException401();
-    }
+//    public Person getPersonByRequest(HttpServletRequest request) throws UnauthorizationException401
+//    {
+//        Optional<Person> person = personRepository.findByEmail(getEmailByRequest(request));
+//        if(person.isPresent()){
+//            return person.get();
+//        }
+//        throw new UnauthorizationException401();
+//    }
 
     /** Валидация токена*/
     public boolean validateToken(String token) throws AccessDeniedException {
@@ -113,7 +113,7 @@ public class TokenProvider
     public List<String> getRoleName(List<Role> personRole){
         List<String> result = new ArrayList<>();
 
-        personRole.forEach(role -> result.add(role.getName()));
+        personRole.forEach(role -> result.add(role.getName().name()));
         return result;
     }
 }

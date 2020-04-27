@@ -13,7 +13,7 @@ import project.handlerExceptions.BadRequestException400;
 import project.models.Person;
 import project.models.Post;
 import project.models.PostComment;
-import project.security.TokenProvider;
+import project.services.PersonService;
 import project.services.PostCommentsService;
 import project.services.PostService;
 
@@ -33,7 +33,7 @@ import static java.util.stream.Collectors.toList;
 public class ApiPostController {
     private PostService postService;
     private PostCommentsService postCommentsService;
-    private TokenProvider tokenProvider;
+    private PersonService personService;
 
     @GetMapping("{id}")
     public ResponseEntity<ResponseDto<PostDto>> getPostById(@PathVariable Integer id) throws BadRequestException400 {
@@ -90,7 +90,7 @@ public class ApiPostController {
                                                                 @RequestBody CommentModelDto commentModelDto,
                                                                 HttpServletRequest servletRequest){
 
-        Person person = tokenProvider.getPersonByRequest(servletRequest);
+        Person person = personService.getPersonByToken(servletRequest);
         PostComment postComment = postCommentsService.addNewCommentToPost(postId, commentModelDto, person);
 
 
