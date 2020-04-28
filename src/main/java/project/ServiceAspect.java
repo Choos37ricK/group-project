@@ -1,25 +1,32 @@
 package project;
 
-import lombok.extern.slf4j.Slf4j;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.AfterThrowing;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Aspect
 @Component
 public class ServiceAspect {
 
+    private static Logger logger = LogManager.getLogger("default");
+
     @Before(value = "execution(* (@org.springframework.stereotype.Service *).*(..))")
     public void entering(JoinPoint joinPoint){
 
-        log.info("Entering: " + joinPoint.getStaticPart().getSignature());
+        String user = null;
+        if (SecurityContextHolder.getContext().getAuthentication() != null){
+            user = SecurityContextHolder.getContext().getAuthentication().getName();
+        }
+        logger.info("Osoba: " + user + " wszedł v: " + joinPoint.getStaticPart().getSignature());
     }
 
     @AfterThrowing(pointcut = "execution(* (@org.springframework.stereotype.Service *).*(..))", throwing = "ex")
     public void logRuntimeException(RuntimeException ex){
-        log.error("Runtime error: " +  ex.toString());
+        logger.error("Och kurva! To nie jest zgodne z planem. Zastrzeżenie! -  " +  ex.toString() + " Message: " + ex.getLocalizedMessage());
     }
 }
