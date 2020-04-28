@@ -103,7 +103,7 @@ class FriendshipServiceTest {
     void getFriendList() { // не судьба
         Person person = personRepository.findById(10).get();
         ListResponseDto<Person> dto = friendshipService.getFriendList("first2",0,20,person);
-        assertEquals(dto.getData(), hasValue("first2"));
+        assertEquals(dto.getTotal(), 1);
 
     }
 
