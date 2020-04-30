@@ -1,6 +1,5 @@
 package project.services;
 
-import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,16 +16,14 @@ import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.PersonDtoWithToken;
 import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
-import project.handlerExceptions.EntityNotFoundException;
+import project.handlerExceptions.EntityAlreadyExistException;
 import project.handlerExceptions.UnauthorizationException401;
 import project.models.Person;
 import project.models.Role;
 import project.models.VerificationToken;
 import project.models.enums.MessagesPermission;
-import project.models.enums.RoleEnum;
 import project.models.util.entity.ImagePath;
 import project.repositories.PersonRepository;
-import project.repositories.RoleRepository;
 import project.security.TokenProvider;
 import project.services.email.EmailService;
 
@@ -60,9 +57,6 @@ public class PersonService {
     EmailService emailService;
 
     @Autowired
-    private RoleRepository roleRepository;
-
-    @Autowired
     private ImagePath imagePath;
 
     //    @PostConstruct
@@ -78,14 +72,9 @@ public class PersonService {
 //
 //    }
 
-    @SneakyThrows(EntityNotFoundException.class)
-    public Person add(RegistrationRequestDto dto) {
+    public Person add(RegistrationRequestDto dto, Role role) throws EntityAlreadyExistException {
         if (personRepository.findPersonByEmail(dto.getEmail()).isPresent())
-            throw new BadRequestException400();
-
-        Role role = roleRepository.findByName(RoleEnum.ROLE_USER).orElseThrow(
-            () -> new EntityNotFoundException("User role not found")
-        );
+            throw new EntityAlreadyExistException("");
 
         Person person = new Person();
         person.setEmail(dto.getEmail());

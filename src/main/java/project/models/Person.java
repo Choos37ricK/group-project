@@ -27,15 +27,15 @@ public class Person extends MainEntity {
 //    @GeneratedValue(strategy = GenerationType.AUTO)
 //    private Integer id;
 
-    @Column(name = "first_name")
+    @Column(name = "first_name", nullable = false)
     @JsonProperty("first_name")
     private String firstName;
 
-    @Column(name = "last_name")
+    @Column(name = "last_name", nullable = false)
     @JsonProperty("last_name")
     private String lastName;
 
-    @Column(updatable = false, name = "reg_date")
+    @Column(updatable = false, name = "reg_date", nullable = false)
     @JsonProperty("reg_date")
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date regDate;
@@ -45,14 +45,16 @@ public class Person extends MainEntity {
     @JsonFormat(shape = JsonFormat.Shape.NUMBER)
     private Date birthDate;
 
-    @Column(name = "e_mail")
+    @Column(name = "e_mail", unique = true, nullable = false)
     private String email;
 
     private String phone;
 
+    @Column(nullable = false)
     @JsonIgnore
     private String password;
 
+    @Column(nullable = false)
     private String photo;
 
     private String about;

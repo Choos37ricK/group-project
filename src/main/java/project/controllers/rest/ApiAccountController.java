@@ -9,17 +9,18 @@ import project.dto.requestDto.PasswordSetDto;
 import project.dto.requestDto.RegistrationRequestDto;
 import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.ResponseDto;
+import project.handlerExceptions.BadRequestException400;
+import project.handlerExceptions.EntityAlreadyExistException;
 import project.models.NotificationType;
 import project.models.Person;
 import project.models.PersonNotificationSetting;
-import project.models.enums.NotificationTypeEnum;
-import project.security.TokenProvider;
+import project.services.AccountService;
 import project.services.NotificationTypeService;
 import project.services.PersonNotificationSettingsService;
 import project.services.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
+import javax.validation.Valid;
 import java.util.Map;
 
 @Slf4j
@@ -27,6 +28,7 @@ import java.util.Map;
 @RequestMapping(value = "/api/v1/account/")
 public class ApiAccountController {
 
+    private AccountService accountService;
     private PersonService personService;
     private PersonNotificationSettingsService personNotificationSettingsService;
     private NotificationTypeService notificationTypeService;
@@ -34,24 +36,27 @@ public class ApiAccountController {
     @Autowired
     public ApiAccountController(PersonService personService,
                                 PersonNotificationSettingsService personNotificationSettingsService,
-                                NotificationTypeService notificationTypeService) {
+                                NotificationTypeService notificationTypeService,
+                                AccountService accountService) {
         this.personService = personService;
         this.personNotificationSettingsService = personNotificationSettingsService;
         this.notificationTypeService = notificationTypeService;
+        this.accountService = accountService;
     }
 
     @PostMapping(value = "register")
-    public ResponseEntity<ResponseDto<MessageResponseDto>> register(@RequestBody RegistrationRequestDto dto) {
+    public ResponseEntity<ResponseDto<MessageResponseDto>> register(@Valid @RequestBody RegistrationRequestDto dto) {
         log.info("контроллер Register отработал");
-        List<NotificationType> types = notificationTypeService.findByCode(
-            NotificationTypeEnum.POST_COMMENT,
-            NotificationTypeEnum.COMMENT_COMMENT,
-            NotificationTypeEnum.FRIEND_REQUEST,
-            NotificationTypeEnum.MESSAGE,
-            NotificationTypeEnum.FRIEND_BIRTHDAY
-        );
-        Person person = personService.add(dto);
-        personNotificationSettingsService.add(person, false, types);
+
+        if (!dto.getPasswd1().equals(dto.getPasswd2()))
+            throw new BadRequestException400();
+
+        try {
+            accountService.register(dto);
+        } catch(EntityAlreadyExistException e) {
+            throw new BadRequestException400();
+        }
+
         return ResponseEntity.ok(new ResponseDto<>(new MessageResponseDto()));
     }
 

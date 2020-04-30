@@ -3,6 +3,7 @@ package project.controllers;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -13,7 +14,8 @@ import project.dto.error.enums.ErrorEnum;
 import project.handlerExceptions.BadRequestException400;
 
 import javax.validation.ConstraintViolationException;
-
+import java.util.List;
+import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
@@ -27,15 +29,27 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
     }
 
     @ExceptionHandler(ConstraintViolationException.class)
-    protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException e, WebRequest request) {
-        return handleExceptionInternal(e, e.getMessage(), new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+    protected ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
+        List<String> errors = ex.getConstraintViolations()
+            .stream()
+            .map(e -> "field: " + e.getPropertyPath() + "; error: " + e.getMessage())
+            .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errors\":" + errors + "}");
     }
 
-   /* @ExceptionHandler(NoHandlerFoundException.class)
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+        List<String> errors = ex.getBindingResult()
+            .getFieldErrors()
+            .stream()
+            .map(e -> "field: " + e.getField() + "; error: " + e.getDefaultMessage())
+            .collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errors\":" + errors + "}");
+    }
+
+    /* @ExceptionHandler(NoHandlerFoundException.class)
     public ResponseEntity<?> handlerNotFound(Exception e){
 
         return ResponseEntity.status(404).body("Not Found");
     }*/
 }
-
-
