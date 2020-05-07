@@ -18,24 +18,20 @@ import project.services.PersonService;
 @Service
 public class JwtUserDetailService implements UserDetailsService
 {
-
     private final PersonService personService;
 
-    private final PersonRepository personRepository;
-
     @Autowired
-    public JwtUserDetailService(PersonService personService, PersonRepository personRepository) {
+    public JwtUserDetailService(PersonService personService) {
         this.personService = personService;
-        this.personRepository = personRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
-        Person person = personService.findPersonByEmail(email);
+        Person person = personService.findPersonByEmail(email).orElse(null);
         if(person == null){
             throw new BadRequestException400();
         }
-        JwtUser jwtUser = JwtUserFactory.create(person);
-        return jwtUser;
+
+        return JwtUserFactory.create(person);
     }
 }

@@ -2,7 +2,6 @@ package project.services;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -25,21 +24,16 @@ import project.models.enums.MessagesPermission;
 import project.models.util.entity.ImagePath;
 import project.repositories.PersonRepository;
 import project.security.TokenProvider;
-import project.services.email.EmailService;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Optional;
-import java.util.UUID;
 
 @Slf4j
 @Service
 public class PersonService {
-
-    @Value("${response.host}")
-    private String host;
 
     @Autowired
     private PersonRepository personRepository;
@@ -51,10 +45,7 @@ public class PersonService {
     private TokenProvider tokenProvider;
 
     @Autowired
-    VerificationTokenService verificationTokenService;
-
-    @Autowired
-    EmailService emailService;
+    private VerificationTokenService verificationTokenService;
 
     @Autowired
     private ImagePath imagePath;
@@ -73,7 +64,7 @@ public class PersonService {
 //    }
 
     public Person add(RegistrationRequestDto dto, Role role) throws EntityAlreadyExistException {
-        if (personRepository.findPersonByEmail(dto.getEmail()).isPresent())
+        if (findPersonByEmail(dto.getEmail()).isPresent())
             throw new EntityAlreadyExistException("");
 
         Person person = new Person();
@@ -118,23 +109,6 @@ public class PersonService {
         return new ResponseDto<>(personDto);
     }
 
-    public ResponseDto<MessageResponseDto> sendRecoveryPasswordEmail(String email) {
-
-        Person person = findPersonByEmail(email);
-        if (person != null) {
-            String token = UUID.randomUUID().toString();
-            VerificationToken verificationToken = new VerificationToken(token, person.getId(), 20);
-            String link = "http://" + host + "/change-password?token=" + token;
-            String message = String.format("Для восстановления пароля перейдите по ссылке %s", link );
-            verificationTokenService.save(verificationToken);
-            emailService.send(email, "Password recovery", message);
-
-        } else {
-            throw new BadRequestException400();
-        }
-        return new ResponseDto<>(new MessageResponseDto());
-    }
-
     public ResponseDto<MessageResponseDto> setNewPassword(PasswordSetDto passwordSetDto, HttpServletRequest request) {
 
         String token = request.getHeader("referer");
@@ -164,8 +138,8 @@ public class PersonService {
         }
     }
 
-    public Person findPersonByEmail(String email){
-        return personRepository.findPersonByEmail(email).orElse(null);
+    public Optional<Person> findPersonByEmail(String email) {
+        return personRepository.findPersonByEmail(email);
     }
 
     public Person findPersonById(Integer id) {
@@ -181,16 +155,15 @@ public class PersonService {
     }
 
     public void deletePersonByEmail(String email){
-        Person person = findPersonByEmail(email);
-        if(person != null){
+        Optional<Person> person = findPersonByEmail(email);
+        if (person.isPresent())
             personRepository.deleteByEmail(email);
-        }
     }
 
     public Person getPersonByToken(ServletRequest servletRequest){
         String token = tokenProvider.resolveToken((HttpServletRequest) servletRequest);
         String email = tokenProvider.getUserEmail(token);
-        return findPersonByEmail(email);
+        return findPersonByEmail(email).orElse(null);
     }
 
     public Person editBody(UpdatePersonDto dto, HttpServletRequest request) throws UnauthorizationException401

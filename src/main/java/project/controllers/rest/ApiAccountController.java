@@ -11,6 +11,7 @@ import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
 import project.handlerExceptions.EntityAlreadyExistException;
+import project.handlerExceptions.EntityNotFoundException;
 import project.models.NotificationType;
 import project.models.Person;
 import project.models.PersonNotificationSetting;
@@ -61,8 +62,17 @@ public class ApiAccountController {
     }
 
     @PutMapping(value = "password/recovery")
-    public ResponseEntity<ResponseDto<MessageResponseDto>> sendRecoveryEmail(@RequestBody Map<String, String> email) {
-        return ResponseEntity.ok(personService.sendRecoveryPasswordEmail(email.get("email")));
+    public ResponseEntity<ResponseDto<MessageResponseDto>> passwordRecovery(@RequestBody Map<String,String> email) {
+        if (!email.containsKey("email"))
+            throw new BadRequestException400();
+
+        try {
+            accountService.recoverPassword(email.get("email"));
+        } catch(EntityNotFoundException e) {
+            throw new BadRequestException400();
+        }
+
+        return ResponseEntity.ok(new ResponseDto<>(new MessageResponseDto()));
     }
 
     @PutMapping("password/set")

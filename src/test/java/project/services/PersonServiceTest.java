@@ -119,12 +119,6 @@ public class PersonServiceTest {
     }
 
     @Test
-    void findPersonByEmail() {
-        Person person = personService.findPersonByEmail("test1@mail.ru");
-        assertEquals(person.getId(), 10);
-    }
-
-    @Test
     void findPersonById() {
         Person person = personService.findPersonById(2);
         assertEquals(person.getEmail(), "test2@mail.ru");
