@@ -4,6 +4,8 @@ import org.springframework.stereotype.Service;
 import project.models.VerificationToken;
 import project.repositories.VerificationTokenRepository;
 
+import java.util.Optional;
+
 @Service
 public class VerificationTokenService {
 
@@ -13,8 +15,8 @@ public class VerificationTokenService {
         this.verificationTokenRepository = verificationTokenRepository;
     }
 
-    public VerificationToken findByUUID(String token) {
-        return verificationTokenRepository.findByUUID(token).orElse(null);
+    public Optional<VerificationToken> findByUUID(String token) {
+        return verificationTokenRepository.findByUUID(token);
     }
 
     public void save(VerificationToken token){

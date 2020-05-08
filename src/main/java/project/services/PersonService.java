@@ -8,10 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import project.dto.requestDto.LoginRequestDto;
-import project.dto.requestDto.PasswordSetDto;
 import project.dto.requestDto.RegistrationRequestDto;
 import project.dto.requestDto.UpdatePersonDto;
-import project.dto.responseDto.MessageResponseDto;
 import project.dto.responseDto.PersonDtoWithToken;
 import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
@@ -19,7 +17,6 @@ import project.handlerExceptions.EntityAlreadyExistException;
 import project.handlerExceptions.UnauthorizationException401;
 import project.models.Person;
 import project.models.Role;
-import project.models.VerificationToken;
 import project.models.enums.MessagesPermission;
 import project.models.util.entity.ImagePath;
 import project.repositories.PersonRepository;
@@ -43,9 +40,6 @@ public class PersonService {
 
     @Autowired
     private TokenProvider tokenProvider;
-
-    @Autowired
-    private VerificationTokenService verificationTokenService;
 
     @Autowired
     private ImagePath imagePath;
@@ -109,47 +103,22 @@ public class PersonService {
         return new ResponseDto<>(personDto);
     }
 
-    public ResponseDto<MessageResponseDto> setNewPassword(PasswordSetDto passwordSetDto, HttpServletRequest request) {
-
-        String token = request.getHeader("referer");
-        token = token.substring(token.indexOf('=') + 1);
-        String password = passwordSetDto.getPassword();
-        log.info(token);
-        VerificationToken verificationToken = verificationTokenService.findByUUID(token);
-        log.info(String.valueOf(verificationToken == null));
-        if (verificationToken != null && (new Date().before(verificationToken.getExpirationDate()))) {
-            int personId = verificationToken.getUserId();
-            Person person = findPersonById(personId);
-            if (person != null){
-                log.info(person.toString());
-                log.info(password);
-                password = encoder.encode(password);
-                log.info(password);
-                person.setPassword(password);
-                personRepository.save(person);
-            }
-
-            verificationTokenService.delete(verificationToken.getId());
-
-            return new ResponseDto<>(new MessageResponseDto());
-        }
-        else {
-            throw new BadRequestException400();
-        }
+    public void updatePassword(Person person, String password) {
+        password = encoder.encode(password);
+        person.setPassword(password);
+        personRepository.save(person);
     }
 
     public Optional<Person> findPersonByEmail(String email) {
         return personRepository.findPersonByEmail(email);
     }
 
-    public Person findPersonById(Integer id) {
-        Optional<Person> optionalPerson = personRepository.findById(id);
-        return optionalPerson.orElse(null);
+    public Optional<Person> findPersonById(Integer id) {
+        return personRepository.findById(id);
     }
 
-    public void blockPersonById(Integer id, Boolean block, Integer blockerId) throws BadRequestException400 {
-        Person person = findPersonById(id);
-        if (person == null) throw new BadRequestException400();
+    public void blockPersonById(Integer id, Boolean block, Integer blockerId) {
+        Person person = findPersonById(id).orElseThrow(BadRequestException400::new);
         person.setBlockedBy(block ? blockerId : null);
         personRepository.save(person);
     }

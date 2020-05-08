@@ -12,6 +12,7 @@ import project.dto.error.Error;
 import project.dto.error.enums.ErrorDescriptionEnum;
 import project.dto.error.enums.ErrorEnum;
 import project.handlerExceptions.BadRequestException400;
+import project.handlerExceptions.DataConsistencyException;
 
 import javax.validation.ConstraintViolationException;
 import java.util.List;
@@ -35,6 +36,11 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
             .map(e -> "field: " + e.getPropertyPath() + "; error: " + e.getMessage())
             .collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("{\"errors\":" + errors + "}");
+    }
+
+    @ExceptionHandler(DataConsistencyException.class)
+    public ResponseEntity<?> handleDataConsistencyException() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Internal Server Error");
     }
 
     @Override

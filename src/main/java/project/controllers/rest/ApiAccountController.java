@@ -3,6 +3,7 @@ package project.controllers.rest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import project.dto.requestDto.NotificationSettingDto;
 import project.dto.requestDto.PasswordSetDto;
@@ -12,6 +13,7 @@ import project.dto.responseDto.ResponseDto;
 import project.handlerExceptions.BadRequestException400;
 import project.handlerExceptions.EntityAlreadyExistException;
 import project.handlerExceptions.EntityNotFoundException;
+import project.handlerExceptions.TokenExpiredException;
 import project.models.NotificationType;
 import project.models.Person;
 import project.models.PersonNotificationSetting;
@@ -22,8 +24,10 @@ import project.services.PersonService;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import java.util.Map;
 
+@Validated
 @Slf4j
 @RestController
 @RequestMapping(value = "/api/v1/account/")
@@ -62,7 +66,7 @@ public class ApiAccountController {
     }
 
     @PutMapping(value = "password/recovery")
-    public ResponseEntity<ResponseDto<MessageResponseDto>> passwordRecovery(@RequestBody Map<String,String> email) {
+    public ResponseEntity<ResponseDto<MessageResponseDto>> passwordRecovery(@RequestBody Map<String, @Email String> email) {
         if (!email.containsKey("email"))
             throw new BadRequestException400();
 
@@ -76,9 +80,17 @@ public class ApiAccountController {
     }
 
     @PutMapping("password/set")
-    public ResponseEntity<ResponseDto<MessageResponseDto>> setNewPassword(
-            @RequestBody PasswordSetDto passwordSetDto, HttpServletRequest request) {
-        return ResponseEntity.ok(personService.setNewPassword(passwordSetDto, request));
+    public ResponseEntity<ResponseDto<MessageResponseDto>> setNewPassword(@RequestBody PasswordSetDto passwordSetDto, HttpServletRequest request) {
+        String token = request.getHeader("referer");
+        token = token.substring(token.indexOf('=') + 1);
+
+        try {
+            accountService.updatePassword(passwordSetDto.getPassword(), token);
+        } catch(EntityNotFoundException | TokenExpiredException  e) {
+            throw new BadRequestException400();
+        }
+
+        return ResponseEntity.ok(new ResponseDto<>(new MessageResponseDto()));
     }
 
     @GetMapping("notifications")
